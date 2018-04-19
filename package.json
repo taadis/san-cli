@@ -1,0 +1,29 @@
+{
+  "name": "@taadis.com/san-cli",
+  "version": "0.0.1",
+  "description": "san command line interface.",
+  "main": "index.js",
+  "bin": {
+    "san": "bin/san"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taadis/san-cli.git"
+  },
+  "keywords": [
+    "san",
+    "cli"
+  ],
+  "author": "taadis <i@taadis.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/taadis/san-cli/issues"
+  },
+  "homepage": "https://github.com/taadis/san-cli#readme",
+  "dependencies": {
+    "commander": "^2.15.1"
+  }
+}
