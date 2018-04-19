@@ -1,5 +1,5 @@
 {
-  "name": "@taadis.com/san-cli",
+  "name": "@taadis/san-cli",
   "version": "0.0.1",
   "description": "san command line interface.",
   "main": "index.js",
