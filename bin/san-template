@@ -1,0 +1,43 @@
+#!/usr/bin/env node
+
+var request = require('request')
+
+/**
+ * 模版仓库列表
+ */
+
+/**
+ * 请求选项
+ */
+var requestOptions = {
+    method: 'GET',
+    url: 'https://api.github.com/users/san-templates/repos',
+    headers: {
+        'User-Agent': 'san-cli'
+    }
+};
+
+/**
+ * 请求回调函数
+ */
+function requestCallback(error, response, body) {
+    if (!error && response.statusCode === 200) {
+        // 请求成功后,在控制台打印出可用的模版的名称及描述,以便用户查看和选择.
+        console.log('Available official templates:');
+        console.log();
+        var repos = JSON.parse(body);
+        repos.forEach(function (repo) {
+            console.log(' * ' + repo.name + ' - ' + repo.description);
+        });
+        console.log();
+    }
+    else {
+        // 请求失败,则在控制台输出错误信息,以便用户查看.
+        console.log(error);
+    }
+}
+
+/**
+ * 执行请求
+ */
+request(requestOptions, requestCallback);

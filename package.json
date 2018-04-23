@@ -1,10 +1,11 @@
 {
   "name": "@taadis/san-cli",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "san command line interface.",
   "main": "index.js",
   "bin": {
-    "san": "bin/san"
+    "san": "bin/san",
+    "san-template": "bin/san-template"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/taadis/san-cli#readme",
   "dependencies": {
-    "commander": "^2.15.1"
+    "commander": "^2.15.1",
+    "request": "^2.85.0"
   }
 }
