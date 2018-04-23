@@ -3,4 +3,5 @@
 require('commander')
   .version(require('../package').version)
   .usage('<command> [options]')
+  .command('template', 'available official templates')
   .parse(process.argv);
