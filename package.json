@@ -1,10 +1,11 @@
 {
   "name": "@taadis/san-cli",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "san command line interface.",
   "main": "index.js",
   "bin": {
     "san": "bin/san",
+    "san-init": "bin/san-init",
     "san-template": "bin/san-template"
   },
   "scripts": {
@@ -26,6 +27,10 @@
   "homepage": "https://github.com/taadis/san-cli#readme",
   "dependencies": {
     "commander": "^2.15.1",
-    "request": "^2.85.0"
+    "download-git-repo": "^1.0.2",
+    "khaos": "^0.9.3",
+    "ora": "^2.0.0",
+    "request": "^2.85.0",
+    "user-home": "^2.0.0"
   }
 }

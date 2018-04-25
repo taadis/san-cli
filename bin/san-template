@@ -1,43 +1,85 @@
 #!/usr/bin/env node
 
+var program = require('commander')
+var ora = require('ora')
 var request = require('request')
 
 /**
- * 模版仓库列表
+ * 使用帮助
+ * 补充示例,以便查看和使用.
  */
+program.on('--help', function () {
+    console.log();
+    console.log('  Examples:');
+    console.log();
+    console.log('    # vew help:');
+    console.log('    $ san template');
+    console.log('    # or');
+    console.log('    $ san template --help');
+    console.log();
+    console.log('    # view official template list:');
+    console.log('    $ san template list');
+    console.log();
+});
 
-/**
- * 请求选项
- */
-var requestOptions = {
-    method: 'GET',
-    url: 'https://api.github.com/users/san-templates/repos',
-    headers: {
-        'User-Agent': 'san-cli'
-    }
-};
+program
+    .command('[list] [options ...]', 'list.')
+    .action(function (command, options) {
+        switch (command) {
+            case "list":
+                templateList();
+                break;
+            default:
+                console.log();
+                console.log('  unknown command.');
+                console.log();
+                return;
+        }
+    })
+    .parse(process.argv);
 
-/**
- * 请求回调函数
- */
-function requestCallback(error, response, body) {
-    if (!error && response.statusCode === 200) {
-        // 请求成功后,在控制台打印出可用的模版的名称及描述,以便用户查看和选择.
-        console.log('Available official templates:');
-        console.log();
-        var repos = JSON.parse(body);
-        repos.forEach(function (repo) {
-            console.log(' * ' + repo.name + ' - ' + repo.description);
-        });
-        console.log();
-    }
-    else {
-        // 请求失败,则在控制台输出错误信息,以便用户查看.
-        console.log(error);
-    }
+if (program.args.length < 1) {
+    return program.help();
 }
 
 /**
- * 执行请求
+ * 模版列表
  */
-request(requestOptions, requestCallback);
+function templateList() {
+    /**
+     * 请求选项
+     */
+    var requestOptions = {
+        method: 'GET',
+        url: 'https://api.github.com/users/san-templates/repos',
+        headers: {
+            'User-Agent': 'san-cli'
+        }
+    };
+    var spinner = ora('loading...')
+
+    /**
+     * 请求回调函数
+     */
+    function requestCallback(error, response, body) {
+        spinner.stop();
+        if (!error && response.statusCode === 200) {
+            // 请求成功后,在控制台打印出可用的模版的名称及描述,以便用户查看和选择.
+            console.log();
+            console.log('Available official templates:');
+            console.log();
+            var repos = JSON.parse(body);
+            repos.forEach(function (repo) {
+                console.log(' * ' + repo.name + ' - ' + repo.description);
+            });
+            console.log();
+        }
+        else {
+            // 请求失败,则在控制台输出错误信息,以便用户查看.
+            console.log(error.message);
+        }
+    }
+
+    spinner.start();
+    request(requestOptions, requestCallback);
+}
