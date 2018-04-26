@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+var exists = require('fs').existsSync
+var rm = require('rimraf').sync
 var programUtil = require('../lib/commander-util')
 var program = require('commander')
 var path = require('path')
@@ -99,7 +101,10 @@ function downloadAndInitProject(template, name) {
     var templatePath = "san-templates/" + template;
     // 用户目录临时模版路径
     var tmpPath = path.join(userHome, ".san-templates", template);
-
+    // 若本地模版已存在,则先删除.
+    if(exists(tmpPath)){
+        rm(tmpPath);
+    }
     downloaodGitRepo(templatePath, tmpPath, function (error) {
         spinner.stop();
         if (error) {
