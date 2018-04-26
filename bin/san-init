@@ -8,7 +8,7 @@ var path = require('path')
 var downloaodGitRepo = require('download-git-repo')
 var ora = require('ora')
 var Khaos = require('khaos')
-var metalsmithIgnore = require('metalsmith-ignore')
+//var metalsmithIgnore = require('metalsmith-ignore')
 var userHome = require('user-home')
 
 /**
@@ -113,9 +113,9 @@ function downloadAndInitProject(template, name) {
             console.log("Donwload failure: " + error.message);
             throw error;
         }
-        // 下载成功,生成               
-        console.log('tmpPath=%s', tmpPath);
-        var khaos = new Khaos(tmpPath);
+        // 下载成功,生成                       
+        var destPath = path.join(cwd, name);
+        var khaos = new Khaos(path.join(tmpPath, 'template'));
 
         // 指定 khaos 的模式,模式数据从当前临时模版的根目录下的khaos.json中获取.
         var tmpkhaosJsonPath = path.join(tmpPath, 'khaos.json');
@@ -123,7 +123,10 @@ function downloadAndInitProject(template, name) {
         khaos.schema(tmpkhaosJson.schema || {});
 
         // 在khaos解析streams中的占位符{{}}前,把一些源代码文件移除,规避san {{}}和占位符{{}}冲突
-        // 没啥用?    
+        // 没啥用?            
+        /*var tmpIgnores = ['*.js'];
+        khaos.metalsmith.use(metalsmithIgnore(tmpIgnores));
+        */
         /*    
         khaos.before(function (files, metalsmith) {
             var tmpIgnores = tmpkhaosJson.ignore || {};
