@@ -60,3 +60,5 @@ typings/
 # Visual Studio Code
 .vscode
 
+# NPM package-lock.json
+package-lock.json
