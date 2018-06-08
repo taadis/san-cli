@@ -19,93 +19,76 @@ program.on('--help', function () {
     console.log();
     console.log('  Examples:');
     console.log();
-    console.log('    # initialcal a project in the current directory');
-    console.log('    $ san init');
-    console.log();
-    console.log('    # initialcal a project with new project name');
-    console.log('    $ san init --name=app');
+    console.log('    # show san init help');
+    console.log('    $ san init --help');
     console.log();
     console.log('    # initialcal a project with an official template');
-    console.log('    $ san init --template=simple');
+    console.log('    $ san init sanApp --template=simple');
     console.log();
 });
 
 program
-    .usage('[options...]')
-    .description('san init is a tool.')
-    .option('-p, --project [project]', 'specify project name.')
+    .usage('<project> [options...]')
+    .description('san init is a tool.');
+    
+program
+    .command('<project> [options...]', 'specify project name and options',)
     .option('-t, --template [template]', 'specify official tempalte.')
+    .action(function(project, ...options){
+        doInit(project, ...options);
+    });
+
+program
     .parse(process.argv);
 
 /**
- * 当命令行参数个数不足时,则输出当前命令的帮助信息
- * 比如:
- * - 输入`san init`时,则输出帮助信息.
+ * 执行初始化
+ * @param project 项目名称
+ * @param options 可用选项
  */
-var opts = program.opts();
-var hasUserOpts = programUtil.hasUserOpts(opts);
-if (!hasUserOpts) {
-    return program.help();
-}
+ function doInit(project, ...options){
+    if(!project){
+        console.log();
+        console.log('   Please enter the name of the project');
+        console.log();
+        return;
+    }
 
-var cwd = process.cwd();
-var basename = path.basename(cwd, path.sep);
+    var opts = program.opts();
+    var cwd = process.cwd();
+    var basename = path.basename(cwd, path.sep);
 
-//console.log('program.project=%s', program.project || null);
-//console.log('program.template=%s', program.template || null);
+    if(opts.template){
+        // 若指定了模板,则下载对应模板并生成
+        downloadAndInitProject(opts.template, project);
+    }
+    else{
+        console.log();
+        console.log('   Waring:option --template has not value.');
+        console.log();
+    }
+ }
 
-downloadAndInitProject(opts.template, opts.project);
-/**
- * 变量,规避命令行参数个数不定时的取值问题,以便后续使用.
- */
-var varOptions = {
-    gitReposUrl: null, // san-templates git repos url
-    clone: false,
-    template: null,
-    name: null,
-    namePath: null,
-    userHome: userHome, // 用户目录,以便后续管理临时模版文件
-    tmpPath: ''//path.join(userHome, '.san-templates', program.template)
-};
-
-// 项目名称
-/**
- * 用户已输入项目名称,则继续.
- * 用户未输入项目名称,则使用当前目录名做为项目名称.
- */
-/*
-console.log(program.args);
-console.log(program.arguments);
-var cwd = process.cwd();
-var basename = path.basename(cwd, path.sep);
-console.log('basename=' + basename);
-var name = program.name || basename;
-if(program.name){
-    // 用户已输入项目名称,则继续
-    name = program.name;
-}
-else{
-    // 用户未输入项目名称,则使用当前目录名做为项目名称.
-    name = basename;
-}
-*/
-
-/**
- * 下载指定的模版并初始化项目
- *
- */
+ /**
+  * 下载指定的模版并初始化项目
+  * @param template 模板名称
+  * @param name 项目名称
+  */
 function downloadAndInitProject(template, name) {
     var spinner = ora('downloading template...');
     spinner.start();
 
     // github模版路径
     var templatePath = "san-templates/" + template;
-    // 用户目录临时模版路径
+
+    // 用户目录临时模版路径    
     var tmpPath = path.join(userHome, ".san-templates", template);
-    // 若本地模版已存在,则先删除.
+
+    // 若本地模版已存在,则先删除.    
     if (exists(tmpPath)) {
         rm(tmpPath);
     }
+    
     downloaodGitRepo(templatePath, tmpPath, function (error) {
         spinner.stop();
         if (error) {
@@ -113,7 +96,8 @@ function downloadAndInitProject(template, name) {
             console.log("Donwload failure: " + error.message);
             throw error;
         }
-        // 下载成功,生成                       
+        // 下载成功,生成            
+        var cwd = process.cwd();           
         var destPath = path.join(cwd, name);
         var khaos = new Khaos(path.join(tmpPath, 'template'));
 
@@ -134,15 +118,14 @@ function downloadAndInitProject(template, name) {
             metalsmith.use(metalsmithIgnore(tmpIgnores)).build();
         });*/
 
-        // 
-        var destPath = path.join(cwd, name);
+        //
         khaos.generate(destPath, function (error) {
             if (error) {
                 console.log("Generate failure:", error.message);
                 throw error;
             }
             console.log();
-            console.log('  Init Completion!');
+            console.log('  Init Completed!');
             console.log();
         });
     });
